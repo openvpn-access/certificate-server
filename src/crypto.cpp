@@ -7,10 +7,8 @@
 #include <openssl/x509.h>
 #include <memory>
 #include <cmath>
-#include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include <functional>
 #include "crypto.hpp"
 #include "exception.hpp"
 
