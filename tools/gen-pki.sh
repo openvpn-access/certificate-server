@@ -1,6 +1,6 @@
 # Setup the PKI
-mkdir -p pki
-cd pki || exit 1
+mkdir -p ../pki
+cd ../pki || exit 1
 
 mkdir -p private req crt
 
