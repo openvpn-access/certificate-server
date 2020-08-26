@@ -1,0 +1,8 @@
+{
+    "cpu_cores": 0,
+    "pki": {
+        "ca_cert": "/openvpn_pki/crt/ca.crt",
+        "ca_key": "/openvpn_pki/private/ca.pem",
+        "ta": "/openvpn_pki/ta.key"
+    }
+}
