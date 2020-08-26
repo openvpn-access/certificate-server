@@ -72,7 +72,7 @@ void CertServerHandler::onRequest(const Pistache::Http::Request &req, Pistache::
             return;
         }
     }
-    else if(req.resource() == "version" && req.method() == Pistache::Http::Method::Get)
+    else if(req.resource() == "/version" && req.method() == Pistache::Http::Method::Get)
     {
         std::string version_string((std::string)"v" + PROJECT_VER_MAJOR + "." + PROJECT_VER_MINOR + "." + PROJECT_VER_PATCH);
 
