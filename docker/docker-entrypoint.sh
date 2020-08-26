@@ -11,11 +11,11 @@ if [[ ! -f $CONFIG_FILE ]]; then
 fi
 
 # Start certificate-server
-while [ true ]
+while true
 do
     echo "Starting certificate-server..."
     # shellcheck disable=SC2046
-    /opt/app/certificate_server --port=$(jq -r .port $CONFIG_FILE) \
+    /opt/app/certificate_server --port=5000 \
                                 --cpu_cores=$(jq -r .cpu_cores $CONFIG_FILE) \
                                 --ca_cert=$(jq -r .pki.ca_cert $CONFIG_FILE) \
                                 --ca_key=$(jq -r .pki.ca_key $CONFIG_FILE) \

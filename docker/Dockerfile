@@ -58,6 +58,8 @@ WORKDIR /opt/app
 COPY ./docker/docker-entrypoint.sh /opt/app/docker-entrypoint.sh
 RUN chmod +x ./docker-entrypoint.sh
 
-COPY ./config/default.json /opt/app/default-config.json
+COPY ./config/docker.json /opt/app/default-config.json
+
+EXPOSE 5000
 
 ENTRYPOINT /bin/sh /opt/app/docker-entrypoint.sh
