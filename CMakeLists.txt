@@ -69,6 +69,15 @@ if(BUILD_TESTS)
     target_link_libraries(certificate_server-tests gtest)
 endif()
 
+# Link against pistache
+find_library(PISTACHE NAMES pistache libpistache REQUIRED)
+
+target_link_libraries(certificate_server ${PISTACHE})
+
+if(BUILD_TESTS)
+    target_link_libraries(certificate_server-tests ${PISTACHE})
+endif()
+
 # Link against openssl
 find_library(OPENSSL NAMES openssl ssl libopenssl REQUIRED)
 find_library(CRYPTO NAMES crypto libcrypto REQUIRED)
@@ -79,15 +88,6 @@ target_link_libraries(certificate_server ${CRYPTO})
 if(BUILD_TESTS)
     target_link_libraries(certificate_server-tests ${OPENSSL})
     target_link_libraries(certificate_server-tests ${CRYPTO})
-endif()
-
-# Link against pistache
-find_library(PISTACHE NAMES pistache libpistache REQUIRED)
-
-target_link_libraries(certificate_server ${PISTACHE})
-
-if(BUILD_TESTS)
-    target_link_libraries(certificate_server-tests ${PISTACHE})
 endif()
 
 # Grab JSON

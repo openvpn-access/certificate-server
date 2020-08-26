@@ -141,7 +141,7 @@ int main(int argc, char const** argv)
         std::shared_ptr<EVP_PKEY> ca_key = load_private_key_file(arguments["ca_key"].c_str());
 
         server = start_server(std::stoi(arguments["port"]),
-                     std::stoi(arguments["cpu_cores"]),
+                     std::stoi(arguments["cpu_cores"]) || std::thread::hardware_concurrency(),
                      ta_key,
                      ca_cert,
                      ca_key);
