@@ -5,6 +5,9 @@
 #include <openssl/err.h>
 #include <openssl/rsa.h>
 #include <openssl/x509.h>
+#include <openssl/pem.h>
+#include <openssl/conf.h>
+#include <openssl/x509v3.h>
 #include <memory>
 #include <cmath>
 #include <cstdio>
@@ -149,6 +152,26 @@ std::shared_ptr<rsa_keypair_t> get_keypair_data(std::shared_ptr<EVP_PKEY> pkey)
     return data;
 }
 
+int add_ext(X509 *cert, int nid, char *value)
+{
+    X509_EXTENSION *ex;
+    X509V3_CTX ctx;
+    /* This sets the 'context' of the extensions. */
+    /* No configuration database */
+    X509V3_set_ctx_nodb(&ctx);
+    /* Issuer and subject certs: both the target since it is self signed,
+     * no request and no CRL
+     */
+    X509V3_set_ctx(&ctx, cert, cert, NULL, NULL, 0);
+    ex = X509V3_EXT_conf_nid(NULL, &ctx, nid, value);
+    if (!ex)
+        return 0;
+
+    X509_add_ext(cert,ex,-1);
+    X509_EXTENSION_free(ex);
+    return 1;
+}
+
 std::shared_ptr<X509> generate_user_cert(std::shared_ptr<EVP_PKEY> pkey, const char* username)
 {
     std::shared_ptr<X509> x509(X509_new(), X509_free);
@@ -156,6 +179,11 @@ std::shared_ptr<X509> generate_user_cert(std::shared_ptr<EVP_PKEY> pkey, const c
     {
         throw cert_generation_exception("Failed to allocate a new X509 certificate!");
     }
+
+    X509_set_version(x509.get(),2);
+    ASN1_INTEGER_set(X509_get_serialNumber(x509.get()),1);
+    X509_gmtime_adj(X509_get_notBefore(x509.get()),0);
+    X509_gmtime_adj(X509_get_notAfter(x509.get()),(long)60*60*24*365);
 
     if(X509_set_pubkey(x509.get(), pkey.get()) == 0)
     {
@@ -182,6 +210,15 @@ std::shared_ptr<X509> generate_user_cert(std::shared_ptr<EVP_PKEY> pkey, const c
     {
         throw cert_generation_exception("Failed to set X509 subject name!");
     }
+
+    /* Add various extensions: standard extensions */
+    add_ext(x509.get(), NID_basic_constraints, "critical,CA:TRUE");
+    add_ext(x509.get(), NID_key_usage, "critical,keyCertSign,cRLSign");
+
+    add_ext(x509.get(), NID_subject_key_identifier, "hash");
+
+    /* Some Netscape specific extensions */
+    add_ext(x509.get(), NID_netscape_cert_type, "sslCA");
 
     return x509;
 }
